@@ -7,14 +7,11 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-Eigen::Matrix<std::complex<T>, -1, 1> eigenvalues(
-    const Eigen::Matrix<T, -1, -1>& m) {
+template <typename Mat, require_eigen_t<Mat>* = nullptr>
+inline auto eigenvalues(const Mat& m) {
   check_nonzero_size("eigenvalues", "m", m);
   check_square("eigenvalues", "m", m);
-
-  Eigen::EigenSolver<Eigen::Matrix<T, -1, -1>> solver(m);
-  return solver.eigenvalues();
+  return m.eigenvalues().eval();
 }
 
 }  // namespace math

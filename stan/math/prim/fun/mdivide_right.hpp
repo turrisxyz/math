@@ -21,26 +21,27 @@ namespace math {
  * match the size of A.
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
-mdivide_right(const EigMat1& b, const EigMat2& A) {
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+inline auto mdivide_right(const EigMat1& b, const EigMat2& A) {
   using T_return = return_type_t<EigMat1, EigMat2>;
   check_square("mdivide_right", "A", A);
   check_multiplicable("mdivide_right", "b", b, "A", A);
   if (A.size() == 0) {
-    return {b.rows(), 0};
+    using ret_type
+        = decltype(A.transpose()
+                       .template cast<T_return>()
+                       .lu()
+                       .solve(b.template cast<T_return>().transpose())
+                       .transpose()
+                       .eval());
+    return ret_type{b.rows(), 0};
   }
-
-  return Eigen::Matrix<T_return, EigMat2::RowsAtCompileTime,
-                       EigMat2::ColsAtCompileTime>(A)
-      .transpose()
+  return A.transpose()
+      .template cast<T_return>()
       .lu()
-      .solve(Eigen::Matrix<T_return, EigMat1::RowsAtCompileTime,
-                           EigMat1::ColsAtCompileTime>(b)
-                 .transpose())
-      .transpose();
+      .solve(b.template cast<T_return>().transpose())
+      .transpose()
+      .eval();
 }
 
 }  // namespace math

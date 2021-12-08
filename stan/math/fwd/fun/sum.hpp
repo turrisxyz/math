@@ -45,7 +45,7 @@ inline value_type_t<T> sum(const T& m) {
   if (m.size() == 0) {
     return 0.0;
   }
-  const Eigen::Ref<const plain_type_t<T>>& m_ref = m;
+  const auto& m_ref = to_ref(m);
   return {sum(m_ref.val()), sum(m_ref.d())};
 }
 
