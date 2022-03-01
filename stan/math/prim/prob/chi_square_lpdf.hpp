@@ -74,7 +74,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   T_partials_return logp(0);
   if (include_summand<propto, T_dof>::value) {
-    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / stan::math::size(nu);
+    logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N
+            / stan::math::size(nu);
   }
   logp += sum((half_nu - 1.0) * log_y);
 

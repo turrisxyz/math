@@ -68,7 +68,8 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   if (!is_constant_all<T_y>::value) {
     if (!is_vector<T_y>::value && is_vector<T_high>::value
         && !is_vector<T_low>::value) {
-      ops_partials.edge1_.partials_ = stan::math::size(beta) * inv(y_minus_alpha);
+      ops_partials.edge1_.partials_
+          = stan::math::size(beta) * inv(y_minus_alpha);
     } else {
       ops_partials.edge1_.partials_ = inv(y_minus_alpha);
     }
