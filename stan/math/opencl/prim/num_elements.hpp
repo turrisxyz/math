@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 
 namespace stan {
 namespace math {
@@ -15,8 +16,8 @@ namespace math {
  */
 template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-size_t num_elements(const T& m) {
-  return size(m);
+inline size_t num_elements(const T& m) {
+  return stan::math::size(m);
 }
 
 }  // namespace math
