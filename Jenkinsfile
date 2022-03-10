@@ -243,7 +243,12 @@ pipeline {
         }
 
         stage('Full Unit Tests') {
-            agent {  label 'gg-linux'  }
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
