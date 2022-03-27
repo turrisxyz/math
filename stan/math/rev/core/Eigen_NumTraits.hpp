@@ -357,85 +357,10 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
 template <typename Index, typename LhsMapper, bool ConjugateLhs,
           bool ConjugateRhs, typename RhsMapper, int Version>
 struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
-                                     ColMajor, ConjugateLhs, double, RhsMapper,
-                                     ConjugateRhs, Version> {
-  using LhsScalar = stan::math::var;
-  using RhsScalar = double;
-  using ResScalar = stan::math::var;
-  enum { LhsStorageOrder = ColMajor };
-
-  EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsMapper& lhsMapper,
-                                    const RhsMapper& rhsMapper, ResScalar* res,
-                                    Index resIncr, const ResScalar& alpha) {
-    const LhsScalar* lhs = lhsMapper.data();
-    const Index lhsStride = lhsMapper.stride();
-    const RhsScalar* rhs = rhsMapper.data();
-    const Index rhsIncr = rhsMapper.stride();
-    run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
-  }
-
-  EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const ResScalar& alpha) {
-    using stan::math::gevv_vvv_vari;
-    using stan::math::var;
-    for (Index i = 0; i < rows; ++i) {
-      res[i * resIncr] += var(
-          new gevv_vvv_vari(&alpha, &lhs[i], lhsStride, rhs, rhsIncr, cols));
-    }
-  }
-};
-
-template <typename Index, typename LhsMapper, bool ConjugateLhs,
-          bool ConjugateRhs, typename RhsMapper, int Version>
-struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
                                      RowMajor, ConjugateLhs, stan::math::var,
                                      RhsMapper, ConjugateRhs, Version> {
   using LhsScalar = stan::math::var;
   using RhsScalar = stan::math::var;
-  using ResScalar = stan::math::var;
-  enum { LhsStorageOrder = RowMajor };
-
-  EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsMapper& lhsMapper,
-                                    const RhsMapper& rhsMapper, ResScalar* res,
-                                    Index resIncr, const RhsScalar& alpha) {
-    const LhsScalar* lhs = lhsMapper.data();
-    const Index lhsStride = lhsMapper.stride();
-    const RhsScalar* rhs = rhsMapper.data();
-    const Index rhsIncr = rhsMapper.stride();
-    run(rows, cols, lhs, lhsStride, rhs, rhsIncr, res, resIncr, alpha);
-  }
-
-  EIGEN_DONT_INLINE static void run(Index rows, Index cols,
-                                    const LhsScalar* lhs, Index lhsStride,
-                                    const RhsScalar* rhs, Index rhsIncr,
-                                    ResScalar* res, Index resIncr,
-                                    const RhsScalar& alpha) {
-    for (Index i = 0; i < rows; i++) {
-      res[i * resIncr] += stan::math::var(new stan::math::gevv_vvv_vari(
-          &alpha,
-          (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
-              ? (&lhs[i])
-              : (&lhs[i * lhsStride]),
-          (static_cast<int>(LhsStorageOrder) == static_cast<int>(ColMajor))
-              ? (lhsStride)
-              : (1),
-          rhs, rhsIncr, cols));
-    }
-  }
-};
-
-template <typename Index, typename LhsMapper, bool ConjugateLhs,
-          bool ConjugateRhs, typename RhsMapper, int Version>
-struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
-                                     RowMajor, ConjugateLhs, double, RhsMapper,
-                                     ConjugateRhs, Version> {
-  using LhsScalar = stan::math::var;
-  using RhsScalar = double;
   using ResScalar = stan::math::var;
   enum { LhsStorageOrder = RowMajor };
 
